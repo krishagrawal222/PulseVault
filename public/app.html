@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PulseVault · Patient App</title>
+<meta name="description" content="Your records. Your consent. Your key. Patient-held, consent-driven health vault.">
+<meta name="theme-color" content="#0B3A45">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/icon-192.png">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app">
+<noscript><p style="padding:20px">PulseVault needs JavaScript (it encrypts your records in your browser).</p></noscript>
+
+<div id="onboard" class="hidden">
+  <div class="wrap onboard">
+    <img class="logo" src="/assets/emblem.jpg" alt="PulseVault emblem" width="150" height="150">
+    <h1 class="center" style="font-size:2rem">PulseVault</h1>
+    <p class="center gold" style="font:italic 1.1rem var(--display)">Your records. Your consent. Your key.</p>
+    <div class="card">
+      <h3>Create your vault</h3>
+      <p class="small muted">Everything stays encrypted on this device. ABHA is optional: you can start with just a phone number.</p>
+      <label class="f">Full name<input id="ob-name" type="text" autocomplete="name" placeholder="e.g. Krish Agrawal"></label>
+      <div class="row">
+        <label class="f">Mobile number<input id="ob-phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit number"></label>
+        <label class="f">Blood group
+          <select id="ob-bg"><option value="">Unknown</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></label>
+      </div>
+      <label class="f">Date of birth <span class="muted">(optional)</span><input id="ob-dob" type="text" placeholder="YYYY-MM-DD"></label>
+      <div id="ob-otp-wrap" class="hidden">
+        <div class="warn">Demo mode: no SMS gateway is connected, so your verification code is shown here: <b id="ob-otp-show" class="mono"></b></div>
+        <label class="f">Enter the 6-digit code<input id="ob-otp" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code"></label>
+      </div>
+      <label class="tg" style="margin-bottom:14px"><input type="checkbox" id="ob-demo" checked><span><b>Load synthetic demo records</b><small>FHIR R4 sample data so you can try consent, scan and revoke right away</small></span></label>
+      <button id="ob-go" class="btn btn-teal" style="width:100%">Verify phone &amp; create vault</button>
+      <p class="small muted center" style="margin:12px 0 0">No data leaves your device until you generate a consent QR.</p>
+    </div>
+  </div>
+</div>
+
+<div id="shell" class="hidden">
+  <header class="appbar">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/assets/emblem.jpg" alt="" width="38" height="38"><span>PULSEVAULT</span></a>
+      <span id="ecg"></span>
+      <a class="ic" href="/provider.html" target="_blank" rel="noopener">Provider view ↗</a>
+    </div>
+    <div class="wrap"><nav class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab" role="tab" data-tab="vault" aria-selected="true">Health Vault</button>
+      <button class="tab" role="tab" data-tab="share" aria-selected="false">Share (Consent)</button>
+      <button class="tab" role="tab" data-tab="live" aria-selected="false">Live Access<span id="live-dot" class="dot hidden">0</span></button>
+      <button class="tab" role="tab" data-tab="emergency" aria-selected="false">Emergency QR</button>
+      <button class="tab" role="tab" data-tab="audit" aria-selected="false">Audit Trail</button>
+      <button class="tab" role="tab" data-tab="me" aria-selected="false">Identity &amp; Data</button>
+    </nav></div>
+  </header>
+
+  <main class="pane">
+    <!-- VAULT -->
+    <section id="tab-vault" role="tabpanel">
+      <h2 id="hello">Hey!</h2>
+      <div class="snap" id="snap"></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="row" style="align-items:center;margin-bottom:10px"><h3 id="list-title" style="margin:0;flex:3">Allergies</h3><button id="add-rec" class="btn btn-gold btn-sm" style="flex:0 0 auto">+ Add record</button></div>
+      <div id="list"></div>
+      <h3 style="margin-top:22px">Recent updates</h3>
+      <div id="recent" class="muted small"></div>
+    </section>
+
+    <!-- SHARE -->
+    <section id="tab-share" role="tabpanel" class="hidden">
+      <h2>Share with a provider</h2>
+      <p class="muted">You choose <b>what</b>, <b>for how long</b> and <b>how</b>. The record is encrypted on this device before it is uploaded; the key travels only inside the QR.</p>
+      <div class="grid g2">
+        <div class="card">
+          <h3>1 · What can they see?</h3>
+          <div class="toggles" id="scope-toggles"></div>
+          <div class="sep"></div>
+          <h3>2 · For how long?</h3>
+          <div class="seg" id="ttl-seg" role="group" aria-label="Duration">
+            <button data-v="15" aria-pressed="true">15 min</button><button data-v="60" aria-pressed="false">1 hour</button><button data-v="1440" aria-pressed="false">24 hours</button>
+          </div>
+          <div class="sep"></div>
+          <h3>3 · How do they get access?</h3>
+          <div class="seg" id="mode-seg" role="group" aria-label="Access method">
+            <button data-v="qr" aria-pressed="true">Scan QR</button><button data-v="otp" aria-pressed="false">6-digit code</button>
+          </div>
+          <p class="small muted" id="mode-note" style="margin-top:8px">Most private: the key lives only in the QR (never sent to our server).</p>
+          <div class="sep"></div>
+          <label class="tg"><input type="checkbox" id="allow-notes"><span><b>Let them propose a note / prescription</b><small>Access stays view-only. Anything they add needs your approval.</small></span></label>
+          <label class="f" style="margin-top:14px">Facility / doctor <span class="muted">(optional)</span><input id="share-label" type="text" maxlength="60" placeholder="e.g. PHC Anand, Dr. A"></label>
+          <button id="gen" class="btn btn-gold" style="width:100%">Generate consent</button>
+        </div>
+        <div class="card" id="share-out">
+          <h3>Consent preview</h3>
+          <p class="muted">Pick what to share and tap <b>Generate consent</b>. Your QR appears here and the session shows up under <b>Live Access</b>.</p>
+          <div class="qrbox" style="opacity:.25"><svg viewBox="0 0 10 10"><rect width="10" height="10" fill="#fff"/><rect x="1" y="1" width="3" height="3"/><rect x="6" y="1" width="3" height="3"/><rect x="1" y="6" width="3" height="3"/><rect x="5" y="5" width="1" height="1"/><rect x="7" y="7" width="2" height="2"/></svg></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIVE -->
+    <section id="tab-live" role="tabpanel" class="hidden">
+      <h2>Consent &amp; access</h2>
+      <p class="muted">Live view of who can see your record. <b>Revoke</b> ends access on the doctor's very next request.</p>
+      <div id="proposals"></div>
+      <div id="live-list"></div>
+      <h3 style="margin-top:24px">Past sessions</h3>
+      <div id="past-list" class="small muted"></div>
+    </section>
+
+    <!-- EMERGENCY -->
+    <section id="tab-emergency" role="tabpanel" class="hidden">
+      <h2>Emergency QR</h2>
+      <p class="muted">A compact, <b>signed</b> summary readable <b>without internet</b>: for emergencies when there's no time or signal. Opt-in; you decide what it contains. Anyone who scans it sees it, so keep it minimal.</p>
+      <div class="grid g2">
+        <div class="card">
+          <label class="tg"><input type="checkbox" id="em-on"><span><b>Enable emergency QR</b><small>Off by default</small></span></label>
+          <div id="em-opts" class="hidden" style="margin-top:14px">
+            <div class="toggles">
+              <label class="tg"><input type="checkbox" id="em-bg" checked><span><b>Blood group</b></span></label>
+              <label class="tg"><input type="checkbox" id="em-al" checked><span><b>Allergies</b></span></label>
+              <label class="tg"><input type="checkbox" id="em-mc" checked><span><b>Chronic medicines</b></span></label>
+              <label class="tg"><input type="checkbox" id="em-cc" checked><span><b>Chronic conditions</b></span></label>
+            </div>
+            <label class="f" style="margin-top:14px">Emergency contact number<input id="em-phone" type="tel" placeholder="optional"></label>
+            <button id="em-gen" class="btn btn-gold" style="width:100%">Generate / refresh emergency QR</button>
+          </div>
+        </div>
+        <div class="card center" id="em-out"><p class="muted">Enable and generate to see the QR.</p></div>
+      </div>
+    </section>
+
+    <!-- AUDIT -->
+    <section id="tab-audit" role="tabpanel" class="hidden">
+      <h2>Audit trail</h2>
+      <p class="muted">Every consent, view, proposal and revocation. Server entries are hash-chained, so tampering is detectable.</p>
+      <div id="audit-list"></div>
+    </section>
+
+    <!-- ME -->
+    <section id="tab-me" role="tabpanel" class="hidden">
+      <h2>Identity &amp; data</h2>
+      <div class="grid g2">
+        <div class="card">
+          <h3>Profile</h3><div id="me-profile"></div>
+        </div>
+        <div class="card">
+          <h3>ABHA linkage <span class="chip gold">sandbox demo</span></h3>
+          <p class="small muted">ABHA is optional. The flow below mimics ABDM's M1 (link by ABHA number + OTP). It is a <b>mock</b>: production needs ABDM sandbox registration &amp; certification.</p>
+          <div id="abha-box"></div>
+        </div>
+        <div class="card">
+          <h3>Your data, your copy</h3>
+          <p class="small muted">Export everything as a standard <b>FHIR R4 Bundle</b>.</p>
+          <button id="exp" class="btn btn-teal">Download FHIR bundle (.json)</button>
+          <div class="sep"></div>
+          <p class="small muted">Erase this vault from this device. Active shares are revoked first.</p>
+          <button id="wipe" class="btn btn-ghost" style="color:var(--red-dark);border-color:var(--red-dark)">Erase vault</button>
+        </div>
+        <div class="card">
+          <h3>Security at a glance</h3>
+          <ul class="small">
+            <li>Vault encrypted on-device (AES-256-GCM, non-extractable key).</li>
+            <li>Shared copies: encrypted before upload; key only in the QR fragment.</li>
+            <li>Signed, expiring tokens verified on every request.</li>
+            <li>Revocation destroys the server-side ciphertext.</li>
+            <li>Honest limit: revoking can't un-see what was already displayed.</li>
+          </ul>
+          <p class="small muted" id="health"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="/vendor/qrcode.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

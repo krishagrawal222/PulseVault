@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PulseVault · Your records. Your consent. Your key.</title>
+<meta name="description" content="PulseVault: an ABHA-linked, QR-based, consent-driven health vault. Patients hold their records; providers see critical history in seconds; consent is scoped, time-bound and instantly revocable.">
+<meta name="theme-color" content="#0B3A45">
+<meta property="og:title" content="PulseVault: Patient-held, consent-driven health record">
+<meta property="og:description" content="Your records. Your consent. Your key.">
+<meta property="og:image" content="/assets/logo.jpg">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/icon-192.png">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="#top"><img src="/assets/emblem.jpg" alt="" width="38" height="38"><span>PULSEVAULT</span></a>
+  <nav class="nav-links" aria-label="Main">
+    <a class="hide-s" href="#problem">Problem</a><a class="hide-s" href="#solution">Solution</a><a class="hide-s" href="#architecture">Architecture</a><a class="hide-s" href="#feasibility">Feasibility</a><a class="hide-s" href="#impact">Impact</a>
+    <a class="btn btn-gold btn-sm" href="/app.html">Open app</a>
+  </nav>
+</div></header>
+
+<section class="hero" id="top"><div class="wrap">
+  <div>
+    <span class="event">VJ Hackathon 2026 · Healthcare · Problem Statement 3</span>
+    <h1>PulseVault</h1>
+    <div class="tag">Your records. Your consent. Your key.</div>
+    <p>An <b>ABHA-linked, QR-based, consent-driven health vault</b>. Patients carry their own record. Any provider (PHC, clinic or district hospital) sees allergies, medicines and tests in seconds, with no login, no hardware and no training. Consent is scoped, time-bound and revocable in one tap.</p>
+    <div class="cta"><a class="btn btn-gold" href="/app.html">I'm a patient: open my vault</a><a class="btn btn-ghost-light" href="/provider.html">I'm a provider: scan a QR</a></div>
+  </div>
+  <div class="hero-art"><img src="/assets/logo.jpg" alt="PulseVault logo: a compass-and-heart emblem with a keyhole and QR code" width="500" height="557"></div>
+</div></section>
+
+<section class="block" id="demo"><div class="wrap">
+  <div class="kicker">Live demo</div><h2>Try the full flow in 60 seconds</h2>
+  <div class="grid g4">
+    <div class="card"><div class="step-n">1</div><h3>Create a vault</h3><p class="small">Open the <a href="/app.html" target="_blank" rel="noopener">patient app</a>, verify a phone (demo code shown on screen) and load the synthetic FHIR records.</p></div>
+    <div class="card"><div class="step-n">2</div><h3>Generate consent</h3><p class="small">Share → choose categories and duration → <b>Generate</b>. A signed, time-bound QR appears.</p></div>
+    <div class="card"><div class="step-n">3</div><h3>Provider scans</h3><p class="small">On another device or tab, open the <a href="/provider.html" target="_blank" rel="noopener">provider view</a> and scan (or use the 6-digit code). Critical Snapshot in about a second. No login.</p></div>
+    <div class="card"><div class="step-n">4</div><h3>Revoke instantly</h3><p class="small">Live Access → <b>Revoke instant access</b>. The provider's screen locks within ~2 seconds and the server destroys the ciphertext.</p></div>
+  </div>
+</div></section>
+
+<section class="block alt" id="problem"><div class="wrap">
+  <div class="kicker">The problem</div><h2>Records don't follow the patient</h2>
+  <div class="grid g2">
+    <div class="card"><h3>The care gap</h3><p>A patient's history is split across PHCs, private clinics and district hospitals. Each record stays with the provider that created it, so the next doctor sees none of it.</p>
+      <h3>Real-world bottlenecks</h3><ul><li><b>Repeated tests:</b> earlier diagnostics unavailable, so patients pay twice.</li><li><b>Unsafe prescribing:</b> unknown allergies and current medicines risk adverse drug events.</li><li><b>Clinic friction:</b> small providers lack the staff, hardware or time for complex EHRs.</li></ul></div>
+    <div class="card"><h3>Who benefits</h3><ul><li><b>Patients</b> (rural, elderly, chronic-care): history travels with them, and they control who sees it.</li><li><b>PHC doctors &amp; small clinics:</b> critical history in seconds.</li><li><b>District hospitals:</b> fewer duplicate investigations.</li><li><b>Health system:</b> less avoidable spend and harm.</li></ul>
+      <h3>Gaps in existing frameworks</h3><ul><li>ABHA/ABDM supplies identity and rails, but PHC adoption is limited by login-heavy workflows.</li><li>Consent is often a static checkbox, not scoped, time-bound and revocable.</li><li>Most tools assume stable internet and registered facilities.</li></ul></div>
+  </div>
+  <h3 style="margin-top:28px">The four requirements PulseVault is built around</h3>
+  <div class="grid g4">
+    <div class="card"><b class="gold">1</b> <b>Patient-held record</b><p class="small" style="margin:6px 0 0">via QR, ABHA linkage, or both (hybrid).</p></div>
+    <div class="card"><b class="gold">2</b> <b>Granular consent + instant revocation</b><p class="small" style="margin:6px 0 0">a live engine, not a static checkbox.</p></div>
+    <div class="card"><b class="gold">3</b> <b>Access in seconds</b><p class="small" style="margin:6px 0 0">no complex login, heavy hardware or training.</p></div>
+    <div class="card"><b class="gold">4</b> <b>Instant critical history</b><p class="small" style="margin:6px 0 0">prescriptions, tests and allergies at a glance.</p></div>
+  </div>
+</div></section>
+
+<section class="block" id="solution"><div class="wrap">
+  <div class="kicker">Idea &amp; solution</div><h2>Consent that's live, not a checkbox</h2>
+  <div class="grid g3">
+    <div class="card"><h3>Consent &amp; Revocation Engine</h3><ul><li><b>Generate:</b> pick scope (allergies, medicines, conditions, tests), duration (15 min · 1 h · 24 h), view-only.</li><li><b>Issue:</b> signed single-purpose QR, or a 6-digit code fallback.</li><li><b>Monitor:</b> live “provider viewing, 08:42 left” plus an audit trail.</li><li><b>Revoke:</b> one tap. The token dies and access ends on the next request.</li></ul></div>
+    <div class="card"><h3>Doctor point-of-care flow</h3><ul><li><b>Scan:</b> phone camera or the light web scanner. No install, no login.</li><li><b>Critical Snapshot:</b> allergies, current medicines, chronic conditions, last tests.</li><li><b>Expand</b> within the granted scope only.</li><li><b>Propose</b> notes or prescriptions; the patient approves. A rule-based allergy cross-check warns on conflicts.</li></ul></div>
+    <div class="card"><h3>Emergency offline QR</h3><ul><li>Signed blood group, allergies and chronic medicines.</li><li>Readable <b>without internet</b>.</li><li>Patient opt-in, minimal by design.</li><li><b>Hybrid identity:</b> ABHA optional. Start with a phone number, link ABHA later.</li></ul></div>
+  </div>
+  <h3 style="margin-top:30px">Product preview</h3>
+  <img class="preview-img" src="/assets/preview.jpg" alt="PulseVault app screens: secure portal with dynamic QR scan, Your Health Vault with Critical Snapshot, Consent and Access with live timer and Revoke button, and provider critical view with high-risk allergy alert" width="900" height="1003" loading="lazy" style="max-width:720px;margin:0 auto">
+  <h3 style="margin-top:30px">Existing vs proposed</h3>
+  <div class="scroll-x"><table class="t"><thead><tr><th>Aspect</th><th>Existing system</th><th>PulseVault</th></tr></thead><tbody>
+    <tr><td>Record ownership</td><td>Held by each provider; fragmented</td><td class="pv">Held by the patient, in one vault</td></tr>
+    <tr><td>Consent</td><td>Static, one-time checkbox</td><td class="pv">Scoped, time-bound, revocable in one tap</td></tr>
+    <tr><td>Provider access</td><td>Accounts, logins, EHR training</td><td class="pv">Scan a QR. No login, no install</td></tr>
+    <tr><td>Connectivity</td><td>Assumes stable internet</td><td class="pv">Low-bandwidth PWA + offline emergency QR</td></tr>
+    <tr><td>Critical history</td><td>Buried in paper or files</td><td class="pv">Allergies, medicines, tests at a glance</td></tr>
+    <tr><td>Transparency</td><td>Patient can't see who viewed</td><td class="pv">Live access status + tamper-evident audit log</td></tr>
+  </tbody></table></div>
+  <h3 style="margin-top:30px">Innovation &amp; USP</h3>
+  <div class="grid g4">
+    <div class="card"><b>Live consent</b><p class="small" style="margin:6px 0 0">Scope and expiry are baked into every signed token and checked on every request, so revocation is instant.</p></div>
+    <div class="card"><b>Zero-login providers</b><p class="small" style="margin:6px 0 0">Any phone or PC with a camera. Removes the adoption barrier for small clinics.</p></div>
+    <div class="card"><b>Hybrid identity</b><p class="small" style="margin:6px 0 0">ABHA-linked or phone/QR-only, so nobody is excluded.</p></div>
+    <div class="card"><b>Security, not buzzwords</b><p class="small" style="margin:6px 0 0">Value comes from E2EE, signed tokens and audit logs, not from “using AI”. No ML model is needed for this problem, so none is used.</p></div>
+  </div>
+</div></section>
+
+<section class="block alt" id="architecture"><div class="wrap">
+  <div class="kicker">System architecture</div><h2>Zero-knowledge sharing</h2>
+  <div class="arch" role="img" aria-label="Architecture: patient app, encryption and vault, ABHA gateway; consent engine, token service, provider light dashboard">
+    <div class="node"><b>Patient app</b><span>PWA: records, consent manager</span></div>
+    <div class="node"><b>Encryption &amp; vault</b><span>AES-256-GCM · FHIR R4</span></div>
+    <div class="node"><b>ABHA gateway</b><span>M1/M2 linkage (ABDM sandbox)</span></div>
+    <div class="node b"><b>Consent engine</b><span>scope · TTL · revoke · audit</span></div>
+    <div class="node b"><b>Token service</b><span>signed short-lived tokens (serverless)</span></div>
+    <div class="node b"><b>Provider light dashboard</b><span>scan → Critical Snapshot</span></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>Data flow: consent → access → revoke</h3><ol><li>Patient picks scope + duration. The scoped snapshot is <b>encrypted on the device</b>; the ciphertext goes to the token service, the key stays in the QR's URL fragment (<code>#k=…</code>), which browsers never send to servers.</li><li>Provider scans. The service verifies the HMAC-signed token, expiry and revoke flag on <b>every request</b> and returns ciphertext only.</li><li>The provider's browser decrypts locally and renders a view-only Critical Snapshot.</li><li>Patient taps <b>Revoke</b>. The ciphertext is destroyed and the provider's next poll (≤2 s) is refused; the screen clears.</li><li>Every event lands in a hash-chained audit log.</li></ol></div>
+    <div class="card"><h3>Tech stack</h3><ul><li><b>Frontend:</b> installable PWA (vanilla JS, no framework), offline shell via service worker.</li><li><b>Backend:</b> Netlify Functions (serverless) + Netlify Blobs.</li><li><b>Standards:</b> FHIR R4 (<code>Patient</code>, <code>AllergyIntolerance</code>, <code>MedicationRequest</code>, <code>Condition</code>, <code>DiagnosticReport</code>), ABDM-style consent artefacts.</li><li><b>Security:</b> AES-256-GCM E2EE, ECDSA-signed emergency QR, HMAC-SHA256 tokens, strict CSP, rate-limited code fallback.</li><li><b>Roadmap:</b> ZKP selective disclosure.</li></ul></div>
+  </div>
+</div></section>
+
+<section class="block" id="feasibility"><div class="wrap">
+  <div class="kicker">Feasibility &amp; roadmap</div><h2>Built for small facilities</h2>
+  <div class="grid g2">
+    <div class="card"><h3>Why it works at a PHC</h3><ul><li><b>No new hardware:</b> any smartphone, tablet or PC browser with a camera.</li><li><b>No training:</b> scan → see.</li><li><b>Low bandwidth:</b> a tiny PWA with an encrypted payload of a few KB.</li><li><b>Offline fallback:</b> the emergency QR needs no connection.</li><li><b>Inclusive:</b> ABHA optional; link later.</li><li><b>Scalable:</b> stateless serverless services; aligned to ABDM interoperability and DPDP Act principles. Production ABDM needs sandbox registration and certification.</li></ul></div>
+    <div><h3>24-hour prototype plan</h3><div class="timeline">
+      <div class="tl"><b>0–3 h</b><span>Scope, FHIR model, wireframes, repo</span></div>
+      <div class="tl"><b>3–9 h</b><span>Backend: APIs, consent engine, token + revoke</span></div>
+      <div class="tl"><b>9–15 h</b><span>Patient app: vault, consent, live access, revoke</span></div>
+      <div class="tl"><b>15–19 h</b><span>Provider web view: scan, snapshot</span></div>
+      <div class="tl"><b>19–21 h</b><span>Encryption, audit log, emergency QR, ABHA sandbox</span></div>
+      <div class="tl"><b>21–24 h</b><span>End-to-end test, latency check, demo rehearsal</span></div></div></div>
+  </div>
+</div></section>
+
+<section class="block alt" id="impact"><div class="wrap">
+  <div class="kicker">Expected outcomes</div><h2>Design targets &amp; vision</h2>
+  <div class="grid g4">
+    <div class="card stat"><b>&lt; 3 s</b><span>scan-to-record (measured live on the provider screen)</span></div>
+    <div class="card stat"><b>0</b><span>logins for providers</span></div>
+    <div class="card stat"><b>0</b><span>unauthorised reads: valid, unexpired, unrevoked token required</span></div>
+    <div class="card stat"><b>≤ 2 s</b><span>revocation takes effect on the provider's screen</span></div>
+  </div>
+  <p class="small muted">Targets are design goals; the provider view shows the real measured scan-to-record time for each session. Impact on repeat tests is to be measured in a pilot.</p>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><h3>Impact on PHC care</h3><p>Safer prescribing, less cost and travel for rural patients, and real patient agency over their own data.</p></div>
+    <div class="card"><h3>Post-hackathon vision</h3><ul><li>PHC pilot with doctor and patient feedback</li><li>Full ABDM HIP/HIU integration and certification</li><li>ZKP selective disclosure; passkey/biometric vault lock</li><li>Regional-language voice UI (Hindi, Telugu, Gujarati)</li><li>Lab &amp; pharmacy auto-capture; caregiver delegation</li></ul></div>
+  </div>
+</div></section>
+
+<footer class="site"><div class="wrap">
+  <p><b style="color:#fff">PulseVault</b> · Scan · Consent · Care</p>
+  <p>Team <b>Enthusiast</b> · Krish Agrawal · Dr. S. &amp; S.S. Ghandhy Government Engineering College, Surat<br>VJ Hackathon 2026 (Victory and Joy in Smart Innovations), CSI SBC, Dept. of CSE, VNRVJIET, Telangana · Healthcare · PS 3: Patient-Held Consent-Driven Health Record</p>
+  <p class="small">Prototype with synthetic data only. Not a medical device and not affiliated with NHA/ABDM. The ABHA flow is a sandbox mock. Allergy checks are simple rules, not clinical decision support.</p>
+</div></footer>
+<script src="/js/common.js"></script>
+<script src="/js/landing.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "pulsevault",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PulseVault - patient-held, consent-driven health record (VJ Hackathon 2026, Healthcare PS3)",
+  "type": "module",
+  "scripts": {
+    "dev": "node dev-server.mjs",
+    "test": "node test/api.test.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}

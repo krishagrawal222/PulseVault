@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>PulseVault · Provider view</title>
+<meta name="description" content="Scan the patient's QR to see their critical history in seconds. No login, no install.">
+<meta name="theme-color" content="#0B3A45">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/assets/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="prov">
+<header class="appbar"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/emblem.jpg" alt="" width="38" height="38"><span>PULSEVAULT</span></a>
+  <span id="ecg" style="flex:1;display:flex"></span>
+  <span class="chip gold">Provider · no login</span>
+</div></header>
+
+<main class="wrap" style="padding:22px 20px 80px;max-width:860px">
+  <!-- entry -->
+  <section id="entry">
+    <h1 style="font-size:2rem">See the record in seconds</h1>
+    <p class="muted">Ask the patient to open <b>Share (Consent)</b> in their PulseVault app. Then scan their QR, or type their 6-digit code. Nothing to install, no account.</p>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Scan patient QR</h3>
+        <div id="scanwrap" class="hidden"><div class="scanbox"><video id="video" playsinline muted></video><div class="frame"></div></div><p class="small muted center" id="scanmsg" style="margin-top:8px">Point the camera at the patient's QR…</p></div>
+        <button id="scanbtn" class="btn btn-gold" style="width:100%">Open camera &amp; scan</button>
+        <p class="small muted" style="margin:10px 0 0">Tip: you can also scan with your phone's normal camera app; the link opens here directly.</p>
+      </div>
+      <div class="card">
+        <h3>Enter 6-digit code</h3>
+        <label class="f">Code from the patient<input id="otp" type="text" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="000000"></label>
+        <button id="otpbtn" class="btn btn-teal" style="width:100%">View record</button>
+        <p class="small muted" id="otperr" style="margin:10px 0 0"></p>
+      </div>
+    </div>
+    <p class="small muted" style="margin-top:18px">Access is limited to what the patient chose, for the time they chose, and ends the moment they revoke. Don't be surprised if it stops mid-visit; that's the point.</p>
+  </section>
+
+  <!-- viewer -->
+  <section id="viewer" class="hidden" aria-live="polite"></section>
+</main>
+
+<script src="/vendor/jsQR.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/provider.js"></script>
+</body>
+</html>
