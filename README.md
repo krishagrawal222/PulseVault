@@ -5,7 +5,7 @@
 **Your records. Your consent. Your key.**
 An ABHA-linked, QR-based, consent-driven health vault. Patients carry their own record, providers see critical history in seconds with no login, and consent is scoped, time-bound and revocable in one tap.
 
-Built for **VJ Hackathon 2026** (CSI SBC, VNRVJIET): Healthcare, *Problem Statement 3: Patient-Held Consent-Driven Health Record*.
+Built as my personal project and also for the submission in contests.
 Team **Enthusiast** · Krish Agrawal · Dr. S. & S.S. Ghandhy Government Engineering College, Surat.
 
 **Live demo:** https://pulsevault-web.netlify.app
